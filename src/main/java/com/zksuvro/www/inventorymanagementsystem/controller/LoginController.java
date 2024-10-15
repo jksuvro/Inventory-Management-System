@@ -55,11 +55,11 @@ public class LoginController implements Initializable {
         loginService.savelogin(login);
 
         if (userNameField.getText().isEmpty() || passwordField.getText().isEmpty()){
-            userNameField.setStyle("-fx-border-color: #7e0000 ;" + " -fx-border-width: 2px ;" + " -fx-border-radius: 15px ;");
-            passwordField.setStyle("-fx-border-color: #7e0000 ;" + " -fx-border-width: 2px ;" + " -fx-border-radius: 15px ;");
+//            userNameField.setStyle("-fx-border-color: #7e0000 ;" + " -fx-border-width: 2px ;" + " -fx-border-radius: 15px ;");
+//            passwordField.setStyle("-fx-border-color: #7e0000 ;" + " -fx-border-width: 2px ;" + " -fx-border-radius: 15px ;");
             setLoginText.setText("please enter username and password");
         }else {
-            setLoginText.setText("Successfully logged in");
+
         }
     }
 
