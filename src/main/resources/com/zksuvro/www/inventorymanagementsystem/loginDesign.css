@@ -1,0 +1,58 @@
+.left-from{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-border-color: #111;
+    -fx-border-width: 1px;
+}
+.right-from{
+    -fx-background-color: #fff;
+    -fx-border-color: #111;
+    -fx-border-width: 1px;
+}
+.close-btn{
+    -fx-background-color: #9a0000;
+    -fx-cursor: hand;
+    -fx-background-radius: 15px;
+    -fx-text-fill: #fff;
+
+}
+.close-btn:hover{
+    -fx-background-color: linear-gradient(to bottom, rgb(248, 0, 0), rgb(115, 0, 0));
+    -fx-background-radius: 15px;
+    -fx-font-style: #fff;
+}
+.text-field{
+    -fx-background-color: linear-gradient(to bottom, #efefef, #eee);
+    -fx-background-radius: 15px;
+    -fx-border-color: #111;
+    -fx-border-radius: 15px;
+    -fx-border-width: 1px;
+    -fx-font-size: 14px;
+    -fx-font-family: Tahoma;
+    -fx-padding: 7px 20px 7px 20px;
+}
+.text-field:focused{
+    -fx-background-color: #fff;
+    -fx-border-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+}
+.login-btn{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(22, 76, 37));
+    -fx-background-radius: 15px;
+    -fx-text-fill: #fff;
+    -fx-font-size: 16px;
+    -fx-font-family: Arial;
+    -fx-cursor: hand;
+}
+.reg-login-btn{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 128, 185), rgb(44, 62, 80));
+    -fx-background-radius: 15px;
+    -fx-text-fill: #fff;
+    -fx-font-size: 16px;
+    -fx-font-family: Arial;
+    -fx-cursor: hand;
+}
+
+.login-btn:hover{
+    -fx-background-color: linear-gradient(to bottom, rgb(74, 143, 99), rgb(48, 168, 100));
+}
