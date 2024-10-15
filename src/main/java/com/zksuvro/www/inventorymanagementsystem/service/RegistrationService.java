@@ -24,7 +24,5 @@ public class RegistrationService {
             e.printStackTrace();
         }
 
-
-
     }
 }
