@@ -10,7 +10,10 @@ import java.io.RandomAccessFile;
 import java.sql.*;
 
 
+
+
 public class LoginService {
+
     public void savelogin(Login login){
 
         try{
@@ -33,9 +36,7 @@ public class LoginService {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Login Success");
                     alert.setHeaderText(null);
-
                     HelloApplication.changeScene("adminDashboard");
-
                     System.out.println("Login successful");
                 }
                 else {

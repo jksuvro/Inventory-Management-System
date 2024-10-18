@@ -5,10 +5,7 @@ import com.zksuvro.www.inventorymanagementsystem.model.Registration;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Collection;
 
 public class RegistrationService {
@@ -16,9 +13,8 @@ public class RegistrationService {
         try{
             Connection connection = DatabaseConnection.getConnection();
             Statement statement = connection.createStatement();
-            //insert into registration value('Rahim', 'karim', 'karim@gmail.com', 01254563355, '1234')
-            String quary = "INSERT INTO registration value('" + registration.getFirstname() + "','" + registration.getLastname() + "','" + registration.getEmail() + "'," + registration.getPhone() + ",'" + registration.getPassword() + "')";
-            statement.executeUpdate(quary);
+            String query =  "INSERT INTO registration (firstname, lastname, phone, username, password) VALUES('"+ registration.getFirstname() + "','" + registration.getLastname() + "','" + registration.getPhone() + "','" + registration.getUsername() + "','" + registration.getPassword() + "')";
+            statement.executeUpdate(query);
             System.err.println("Registration saved");
         }catch (SQLException e) {
             e.printStackTrace();

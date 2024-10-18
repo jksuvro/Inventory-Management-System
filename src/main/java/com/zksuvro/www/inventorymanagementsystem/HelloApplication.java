@@ -28,10 +28,10 @@ public class HelloApplication extends Application {
     public static void changeScene(String fileName) {
         try{
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(fileName + ".fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 800, 650);
+            Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle("Registration");
             stage.setScene(scene);
-            stage.setScene(scene);
+
         }catch (IOException ex){
             ex.printStackTrace();
         }

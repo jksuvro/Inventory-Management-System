@@ -28,10 +28,10 @@ public class registrationController implements Initializable {
     private CheckBox agreeCheckBox;
 
     @FXML
-    private ImageView regLeftBrandImg;
+    private Button closeBtn;
 
     @FXML
-    private TextField emailReg;
+    private PasswordField confirmPassword;
 
     @FXML
     private TextField firstNameReg;
@@ -46,16 +46,19 @@ public class registrationController implements Initializable {
     private TextField phoneReg;
 
     @FXML
-    private Button regLoginBtn;
+    private ImageView regLeftBrandImg;
 
     @FXML
-    private Button closeBtn;
+    private Button regLoginBtn;
 
     @FXML
     private Button signupReg;
 
     @FXML
     private Label successfullySave;
+
+    @FXML
+    private TextField userNameReg;
 
     @FXML
     void regLoginBtn(ActionEvent event) {
@@ -70,13 +73,15 @@ public class registrationController implements Initializable {
 
     @FXML
     void signUpAction(ActionEvent event) {
-        String email = emailReg.getText();
         String firstname = firstNameReg.getText();
         String lastname = lastNameReg.getText();
-        String password = passwordReg.getText();
         int phone = Integer.parseInt(phoneReg.getText());
+        String username = userNameReg.getText();
+        String password = passwordReg.getText();
+        String passwordConfirm = confirmPassword.getText();
 
-        Registration registration = new Registration(firstname, lastname, email, phone, password);
+
+        Registration registration = new Registration(firstname, lastname, phone, username, password);
         RegistrationService registrationService = new RegistrationService();
         registrationService.saveregistration(registration);
 

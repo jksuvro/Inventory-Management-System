@@ -1,0 +1,167 @@
+.top-form{
+    -fx-background-color: #fff;
+    -fx-border-color: #111;
+    -fx-border-width: 1px 0px;
+}
+.close{
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-border-color: #111;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+}
+.close:hover{
+    -fx-background-color: #ca0000;
+    -fx-border-radius: 3px;
+    -fx-border-color: #ca0000;
+    -fx-text-fill: #fff;
+}
+.minimize{
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-border-color: #111;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px
+}
+.minimize:hover{
+    -fx-background-color: #ddd;
+    -fx-border-color: #ddd;
+    -fx-effect: dropshadow(three-pass-box, rgba(237, 237, 237, 0.4), 5,0,0,0);
+}
+
+.nav-form{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+}
+.nav-btn{
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(237, 237, 237, 0.4), 5,0,0,0);
+}
+.nav-btn:hover{
+    -fx-background-color: #fff;
+    -fx-cursor: hand;
+    -fx-text-fill: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+
+}
+.logout{
+    -fx-background-color: #fff;
+    -fx-cursor: hand;
+}
+.logout:hover{
+    -fx-background-color: #ca0000;
+    -fx-text-fill: #fff;
+}
+.shadow{
+    -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.4), 5,0,0,0);
+}
+.white-bg{
+    -fx-background-color: #fff;
+    -fx-background-radius: 10px;
+}
+.card{
+    -fx-background-color: linear-gradient(to right, rgb(103, 178, 111), rgb(76, 162, 205));
+    -fx-background-radius: 5px;
+}
+
+.text-field{
+    -fx-background-color: linear-gradient(to bottom, #efefef, #eee);
+    -fx-background-radius: 5px;
+    -fx-border-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-font-size: 12px;
+}
+.text-field:focused{
+    -fx-background-color: #fff;
+    -fx-border-color: linear-gradient(to bottom, rgb(219, 230, 246), rgb(197, 121, 109));
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}
+.upload-btn{
+    -fx-background-color: #cac8c8;
+    -fx-text-fill: #aa0000;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+.upload-btn:hover{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-text-fill: #fff;
+}
+.add-btn{
+    -fx-background-color: #623cca;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.add-btn:hover{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-text-fill: #fff;
+}
+
+.update-btn{
+    -fx-background-color: #228f0e;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.update-btn:hover{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-text-fill: #fff;
+}
+.edit-btn{
+    -fx-background-color: #d1c834;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.edit-btn:hover{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-text-fill: #fff;
+}
+.delete-btn{
+    -fx-background-color: #cd2139;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.delete-btn:hover{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-text-fill: #fff;
+}
+.search{
+    -fx-background-color: transparent;
+    -fx-border-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-border-width: 1px;
+    -fx-font-size: 14px;
+}
+.search:hover{
+    -fx-border-width: 2px;
+}
+.table-view{
+    -fx-background-color: transparent;
+    -fx-border-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-padding: 0px;
+}
+.table-view .column-header-background{
+    -fx-background-color: linear-gradient(to bottom, rgb(41, 143, 57), rgb(48, 97, 168));
+    -fx-background-radius: 5px 5px 0px 0px;
+}
+.table-view .column-header, .filter{
+    -fx-background-color: transparent;
+    -fx-size: 40px;
+}
+.table-view .column-header .label{
+    -fx-text-fill: #fff;
+}

@@ -30,7 +30,7 @@
       </AnchorPane>
       <AnchorPane layoutX="10.0" prefHeight="660.0" prefWidth="400.0" styleClass="right-from" stylesheets="@loginDesign.css" AnchorPane.rightAnchor="0.0">
          <children>
-            <Label layoutX="97.0" layoutY="133.0" text="Registration">
+            <Label layoutX="97.0" layoutY="103.0" text="Registration">
                <font>
                   <Font name="Poppins ExtraBold" size="36.0" />
                </font>
@@ -51,16 +51,17 @@
                   </LinearGradient>
                </textFill>
             </Label>
-            <TextField fx:id="firstNameReg" layoutX="85.0" layoutY="225.0" prefHeight="25.0" prefWidth="250.0" promptText="First Name" styleClass="text-field" stylesheets="@loginDesign.css" />
-            <TextField fx:id="lastNameReg" layoutX="85.0" layoutY="267.0" prefHeight="25.0" prefWidth="250.0" promptText="Last Name" styleClass="text-field" stylesheets="@loginDesign.css" />
-            <TextField fx:id="emailReg" layoutX="85.0" layoutY="305.0" prefHeight="25.0" prefWidth="250.0" promptText="Email" styleClass="text-field" stylesheets="@loginDesign.css" />
-            <TextField fx:id="phoneReg" layoutX="85.0" layoutY="344.0" prefHeight="25.0" prefWidth="250.0" promptText="Phone" styleClass="text-field" stylesheets="@loginDesign.css" />
+            <TextField fx:id="firstNameReg" layoutX="85.0" layoutY="182.0" prefHeight="25.0" prefWidth="250.0" promptText="First Name" styleClass="text-field" stylesheets="@loginDesign.css" />
+            <TextField fx:id="lastNameReg" layoutX="85.0" layoutY="224.0" prefHeight="25.0" prefWidth="250.0" promptText="Last Name" styleClass="text-field" stylesheets="@loginDesign.css" />
+            <TextField fx:id="phoneReg" layoutX="85.0" layoutY="262.0" prefHeight="25.0" prefWidth="250.0" promptText="Phone" styleClass="text-field" stylesheets="@loginDesign.css" />
+            <TextField fx:id="userNameReg" layoutX="85.0" layoutY="301.0" prefHeight="25.0" prefWidth="250.0" promptText="Username" styleClass="text-field" stylesheets="@loginDesign.css" />
             <Button fx:id="signupReg" layoutX="86.0" layoutY="485.0" mnemonicParsing="false" onAction="#signUpAction" prefHeight="30.0" prefWidth="253.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Sign Up" />
-            <PasswordField fx:id="passwordReg" layoutX="85.0" layoutY="384.0" prefHeight="25.0" prefWidth="250.0" promptText="Password" styleClass="text-field" stylesheets="@loginDesign.css" />
+            <PasswordField fx:id="passwordReg" layoutX="85.0" layoutY="342.0" prefHeight="25.0" prefWidth="250.0" promptText="Password" styleClass="text-field" stylesheets="@loginDesign.css" />
             <Label fx:id="successfullySave" layoutX="166.0" layoutY="458.0" textFill="#00360d" />
             <Button fx:id="regLoginBtn" layoutX="84.0" layoutY="529.0" mnemonicParsing="false" onAction="#regLoginBtn" prefHeight="30.0" prefWidth="253.0" styleClass="reg-login-btn" stylesheets="@loginDesign.css" text="Login" />
             <CheckBox fx:id="agreeCheckBox" layoutX="154.0" layoutY="428.0" mnemonicParsing="false" text="I agreed with you" />
-            <Button fx:id="closeBtn" layoutX="313.0" layoutY="21.0" mnemonicParsing="false" onAction="#closeBtnAction" prefHeight="25.0" prefWidth="61.0" styleClass="close-btn" stylesheets="@loginDesign.css" text="Close" textFill="WHITE" />
+            <Button fx:id="closeBtn" layoutX="313.0" layoutY="21.0" mnemonicParsing="false" onAction="#closeBtnAction" prefHeight="25.0" prefWidth="61.0" styleClass="close-btn" stylesheets="@loginDesign.css" text="X" />
+            <PasswordField fx:id="confirmPassword" layoutX="85.0" layoutY="383.0" prefHeight="25.0" prefWidth="250.0" promptText="Confirm Password" styleClass="text-field" stylesheets="@loginDesign.css" />
          </children>
       </AnchorPane>
    </children>

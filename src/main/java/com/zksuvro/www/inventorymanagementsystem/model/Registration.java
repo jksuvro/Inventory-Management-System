@@ -5,14 +5,15 @@ public class Registration {
     private String firstname;
     private String lastname;
     private int phone;
-    private String email;
+    private String username;
     private String password;
+    private String confirmPassword;
 
-    public Registration(String firstname, String lastname, String email, int phone, String password) {
+    public Registration(String firstname, String lastname, int phone, String username, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
-        this.email = email;
         this.phone = phone;
+        this.username = username;
         this.password = password;
     }
 
@@ -40,12 +41,12 @@ public class Registration {
         this.phone = phone;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

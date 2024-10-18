@@ -43,6 +43,12 @@
       <artifactId>mysql-connector-j</artifactId>
       <version>8.3.0</version>
     </dependency>
+    <!-- Font Awesome  -->
+    <dependency>
+      <groupId>de.jensd</groupId>
+      <artifactId>fontawesomefx</artifactId>
+      <version>8.2</version>
+    </dependency>
 
   </dependencies>
 
