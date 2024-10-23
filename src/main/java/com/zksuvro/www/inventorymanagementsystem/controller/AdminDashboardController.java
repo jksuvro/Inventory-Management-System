@@ -9,6 +9,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -189,7 +191,7 @@ public class AdminDashboardController implements Initializable {
     private Image image;
 
 
-//    ADD Product Section
+//    ADD PRODUCT ACTION
     @FXML
     void addProducts_AddBtn() {
 
@@ -257,7 +259,7 @@ public class AdminDashboardController implements Initializable {
     }
 
 
-//    Table View Product List show
+//    TABLE VIEW PRODUCT SHOW LIST
     private ResultSet result;
     public ObservableList<ProductData> addProductListData() {
         Connection connection = DatabaseConnection.getConnection();
@@ -299,7 +301,7 @@ public class AdminDashboardController implements Initializable {
         addProducts_TableView.setItems(addProductsList);
     }
 
-    //    Product Selected
+//    PRODUCT SELECT ACTION
     public void addProductsSelect() {
         ProductData prodD = addProducts_TableView.getSelectionModel().getSelectedItem();
         int num = addProducts_TableView.getSelectionModel().getSelectedIndex();
@@ -320,6 +322,8 @@ public class AdminDashboardController implements Initializable {
 
         ImageData.path = prodD.getImage();
     }
+
+//    PRODUCT EDIT ACTON
     @FXML
     void addProducts_UpdateBtn() {
         String uri = ImageData.path;
@@ -391,7 +395,7 @@ public class AdminDashboardController implements Initializable {
 
     }
 
-//    DELETE PRODUCT
+//   PRODUCT DELETE ACTION
     @FXML
     void addProducts_DeleteBtn() {
         String sql = "DELETE FROM product WHERE product_id = '" + addProducts_ProductId.getText() + "'";
@@ -440,7 +444,7 @@ public class AdminDashboardController implements Initializable {
 
     }
 
-//    Product image upload Button
+//    PRODUCT IMAGE ACTION
     @FXML
     void addProducts_upload(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -453,6 +457,34 @@ public class AdminDashboardController implements Initializable {
             image = new Image(file.toURI().toString(), 112, 120, false, true );
             addProducts_imgView.setImage(image);
         }
+    }
+//    PRODUCT SEARCH OPTION
+    public void addProductSearch(){
+        FilteredList<ProductData> filter = new FilteredList<>(addProductsList, e -> true);
+        addProducts_Search.textProperty().addListener((observable, oldValue, newValue) -> {
+            filter.setPredicate(productData -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String searchKey = newValue.toLowerCase();
+                if (productData.getProductId().toString().contains(searchKey)) {
+                    return true;
+                }else if (productData.getType().toLowerCase().contains(searchKey)) {
+                    return true;
+                }else if(productData.getBrand().toLowerCase().contains(searchKey)) {
+                    return true;
+                }else if( productData.getProductName().toLowerCase().contains(searchKey)) {
+                    return true;
+                }else if (productData.getPrice()<0) {
+                    return true;
+                }else if (productData.getStatus().toLowerCase().contains(searchKey)) {
+                    return true;
+                }else return false;
+            });
+        });
+        SortedList<ProductData> sortedList = new SortedList<>(filter);
+        sortedList.comparatorProperty().bind(addProducts_TableView.comparatorProperty());
+        addProducts_TableView.setItems(sortedList);
     }
 
 
@@ -482,8 +514,8 @@ public class AdminDashboardController implements Initializable {
 
 
 
-
-//    Scene Change in Admin Dashboard
+//    COMMON FUNCTION:
+//    SCENE CHANGE IN DASHBOARD
     @FXML
     void switchForm(ActionEvent event) {
         if (event.getSource() == home_Btn) {
@@ -503,6 +535,9 @@ public class AdminDashboardController implements Initializable {
             addProduct_Btn.setStyle(" -fx-background-color: #fff");
             order_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
 
+
+            addProductListData();
+            addProductSearch();
             addProductShowListData();
 
         } else if (event.getSource() == order_Btn) {
@@ -545,6 +580,8 @@ public class AdminDashboardController implements Initializable {
         stage.setIconified(true);
 
     }
+
+
 
 //    Initialize Array list and others
     @Override
