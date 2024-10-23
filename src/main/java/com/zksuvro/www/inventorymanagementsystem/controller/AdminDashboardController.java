@@ -1,19 +1,34 @@
 package com.zksuvro.www.inventorymanagementsystem.controller;
 
 import com.zksuvro.www.inventorymanagementsystem.HelloApplication;
+import com.zksuvro.www.inventorymanagementsystem.model.ImageData;
+import com.zksuvro.www.inventorymanagementsystem.model.ProductData;
+import com.zksuvro.www.inventorymanagementsystem.service.DatabaseConnection;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.util.Optional;
+import java.io.File;
+import java.net.URL;
+import java.sql.*;
+import java.util.*;
+import java.util.Date;
 
-public class AdminDashboardController {
+public class AdminDashboardController implements Initializable {
 
     @FXML
     private Label UserName;
@@ -25,22 +40,25 @@ public class AdminDashboardController {
     private Button addProducts_AddBtn;
 
     @FXML
-    private TableColumn<?, ?> addProducts_Col_Brand;
+    private TableView<ProductData> addProducts_TableView;
 
     @FXML
-    private TableColumn<?, ?> addProducts_Col_Name;
+    private TableColumn<ProductData, String> addProducts_Col_Brand;
 
     @FXML
-    private TableColumn<?, ?> addProducts_Col_Price;
+    private TableColumn<ProductData, String> addProducts_Col_Name;
 
     @FXML
-    private TableColumn<?, ?> addProducts_Col_ProductId;
+    private TableColumn<ProductData, Number> addProducts_Col_Price;
 
     @FXML
-    private TableColumn<?, ?> addProducts_Col_Status;
+    private TableColumn<ProductData, Number> addProducts_Col_ProductId;
 
     @FXML
-    private TableColumn<?, ?> addProducts_Col_Type;
+    private TableColumn<ProductData, String> addProducts_Col_Status;
+
+    @FXML
+    private TableColumn<ProductData, String> addProducts_Col_Type;
 
     @FXML
     private Button addProducts_DeleteBtn;
@@ -61,16 +79,13 @@ public class AdminDashboardController {
     private TextField addProducts_ProductPrice;
 
     @FXML
-    private ComboBox<?> addProducts_ProductStatus;
+    private ComboBox<String> addProducts_ProductStatus;
 
     @FXML
-    private ComboBox<?> addProducts_ProductType;
+    private ComboBox<String> addProducts_ProductType;
 
     @FXML
     private TextField addProducts_Search;
-
-    @FXML
-    private TableView<?> addProducts_TableView;
 
     @FXML
     private Button addProducts_UpdateBtn;
@@ -171,30 +186,273 @@ public class AdminDashboardController {
     @FXML
     private Button orders_AddBtn;
 
+    private Image image;
+
+
+//    ADD Product Section
+    @FXML
+    void addProducts_AddBtn() {
+
+        try {
+            Alert alert;
+            if (addProducts_ProductId.getText().isEmpty()
+                    || addProducts_ProductType.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductBrand.getText().isEmpty()
+                    || addProducts_ProductName.getText().isEmpty()
+                    || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductPrice.getText().isEmpty()
+                    || ImageData.path == ""){
+
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all the required fields");
+                alert.showAndWait();
+            }else {
+//                CHECK THE PRODUCT ID IS ALREADY EXIST
+                String checkData = "SELECT product_id FROM product WHERE product_id= '" + addProducts_ProductId.getText() + "'";
+                Statement statement = DatabaseConnection.getConnection().createStatement();
+                ResultSet resultSet = statement.executeQuery(checkData);
+                if (resultSet.next()) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Product already" + addProducts_ProductId.getText() + "was already exist!");
+                    alert.showAndWait();
+                } else {
+                    Connection connection = DatabaseConnection.getConnection();
+                    connection.createStatement();
+                    String sql = "INSERT INTO product (product_id, type, brand, productName, price, status, date, image) VALUES (?,?,?,?,?,?,?,?)";
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setString(1, addProducts_ProductId.getText());
+                    preparedStatement.setString(2, (String) addProducts_ProductType.getSelectionModel().getSelectedItem());
+                    preparedStatement.setString(3, addProducts_ProductBrand.getText());
+                    preparedStatement.setString(4, addProducts_ProductName.getText());
+                    preparedStatement.setString(5, addProducts_ProductPrice.getText());
+                    preparedStatement.setString(6, (String) addProducts_ProductStatus.getSelectionModel().getSelectedItem());
+
+//              For date update
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                    preparedStatement.setDate(7, sqlDate);
+
+//              Image path update
+                    String uri = ImageData.path;
+                    uri = uri.replace("\\", "\\\\");
+                    preparedStatement.setString(8, uri);
+
+                    preparedStatement.execute();
+
+//                TO BECOME UPDATE YOUR TABLE VIEW
+                    addProductShowListData();
+//              CLEAR THE FIELD
+                    addProducts_EditBtn();
+
+                    System.err.println("Product Added Successfully");
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+//    Table View Product List show
+    private ResultSet result;
+    public ObservableList<ProductData> addProductListData() {
+        Connection connection = DatabaseConnection.getConnection();
+        ObservableList<ProductData> productlist = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM product";
+        try {
+            connection.createStatement();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            result = preparedStatement.executeQuery();
+            ProductData prodD;
+            while (result.next()) {
+                prodD = new ProductData(result.getInt("product_id")
+                        , result.getString("type")
+                        , result.getString("brand")
+                        , result.getString("productName")
+                        , result.getDouble("price")
+                        , result.getString("status")
+                        , result.getString("image")
+                        , result.getDate("date"));
+                productlist.add(prodD);
+                System.err.println("Product Data Get");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return productlist;
+    }
+
+    private ObservableList<ProductData> addProductsList;
+    public void addProductShowListData(){
+        addProductsList = addProductListData();
+        addProducts_Col_ProductId.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getProductId()));
+        addProducts_Col_Type.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getType()));
+        addProducts_Col_Brand.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getBrand()));
+        addProducts_Col_Name.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getProductName()));
+        addProducts_Col_Status.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getStatus()));
+        addProducts_Col_Price.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getPrice()));
+
+        addProducts_TableView.setItems(addProductsList);
+    }
+
+    //    Product Selected
+    public void addProductsSelect() {
+        ProductData prodD = addProducts_TableView.getSelectionModel().getSelectedItem();
+        int num = addProducts_TableView.getSelectionModel().getSelectedIndex();
+
+        if((num -1) < -1 ){
+            return;
+        }
+        addProducts_ProductId.setText(String.valueOf(prodD.getProductId()));
+//        addProducts_ProductType.getSelectionModel().clearSelection();
+        addProducts_ProductBrand.setText(prodD.getBrand());
+        addProducts_ProductName.setText(prodD.getProductName());
+//        addProducts_ProductStatus.getSelectionModel().clearSelection();
+        addProducts_ProductPrice.setText(String.valueOf(prodD.getPrice()));
+
+        String uri = "file:" + prodD.getImage();
+        image = new Image(uri, 112, 120, false, true);
+        addProducts_imgView.setImage(image);
+
+        ImageData.path = prodD.getImage();
+    }
+    @FXML
+    void addProducts_UpdateBtn() {
+        String uri = ImageData.path;
+        uri = uri.replace("\\", "\\\\");
+
+        Date date = new Date();
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+        String sql = "UPDATE product SET type = '" + addProducts_ProductType.getSelectionModel().getSelectedItem()
+                + "', brand = '" + addProducts_ProductBrand.getText()
+                + "', productName = '" + addProducts_ProductName.getText()
+                + "', price = '" + addProducts_ProductPrice.getText()
+                + "', status = '" + addProducts_ProductStatus.getSelectionModel().getSelectedItem()
+                + "', image = '" + uri
+                + "', date = '" + sqlDate
+                + "' WHERE product_id = '" + addProducts_ProductId.getText() + "'";
+        try{
+            Alert alert;
+            if (addProducts_ProductId.getText().isEmpty()
+                    || addProducts_ProductType.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductBrand.getText().isEmpty()
+                    || addProducts_ProductName.getText().isEmpty()
+                    || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductPrice.getText().isEmpty()
+                    || ImageData.path == ""){
+
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all the required fields");
+                alert.showAndWait();
+            }else {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to update this product" + addProducts_ProductId.getText() + "?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if ( result.get() == ButtonType.OK){
+                    Connection connection = DatabaseConnection.getConnection();
+                    Statement statement = connection.createStatement();
+                    statement.executeUpdate(sql);
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully updated");
+                    alert.showAndWait();
+
+                    addProductShowListData();
+                    addProducts_EditBtn();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
-    void addProducts_AddBtn(ActionEvent event) {
+    void addProducts_EditBtn() {
+        addProducts_ProductId.setText("");
+        addProducts_ProductType.getSelectionModel().clearSelection();
+        addProducts_ProductBrand.setText("");
+        addProducts_ProductName.setText("");
+        addProducts_ProductPrice.setText("");
+        addProducts_ProductStatus.getSelectionModel().clearSelection();
+        addProducts_imgView.setImage(null);
+        ImageData.path = "";
 
     }
 
+//    DELETE PRODUCT
     @FXML
-    void addProducts_DeleteBtn(ActionEvent event) {
+    void addProducts_DeleteBtn() {
+        String sql = "DELETE FROM product WHERE product_id = '" + addProducts_ProductId.getText() + "'";
+        try {
+            Alert alert;
+            if (addProducts_ProductId.getText().isEmpty()
+//                    || addProducts_ProductType.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductBrand.getText().isEmpty()
+                    || addProducts_ProductName.getText().isEmpty()
+//                    || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductPrice.getText().isEmpty()
+                    || ImageData.path == ""){
+
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all the required fields");
+                alert.showAndWait();
+            }else {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to DELETE this product" + addProducts_ProductId.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+                if ( option.get() == ButtonType.OK){
+                    Connection connection = DatabaseConnection.getConnection();
+                    Statement statement = connection.createStatement();
+                    statement.executeUpdate(sql);
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Deleted");
+                    alert.showAndWait();
+
+                    addProductShowListData();
+                    addProducts_EditBtn();
+                }
+
+
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
 
     }
 
-    @FXML
-    void addProducts_EditBtn(ActionEvent event) {
-
-    }
-
-    @FXML
-    void addProducts_UpdateBtn(ActionEvent event) {
-
-    }
-
+//    Product image upload Button
     @FXML
     void addProducts_upload(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Image File");
+        fileChooser.getExtensionFilters().addAll( new FileChooser.ExtensionFilter("Image File", "*.jpg", "*.png") );
 
+        File file = fileChooser.showOpenDialog(main_Form.getScene().getWindow());
+        if (file != null) {
+            ImageData.path = file.getAbsolutePath();
+            image = new Image(file.toURI().toString(), 112, 120, false, true );
+            addProducts_imgView.setImage(image);
+        }
     }
 
 
@@ -221,6 +479,11 @@ public class AdminDashboardController {
     void orders_ResetBtn(ActionEvent event) {
 
     }
+
+
+
+
+//    Scene Change in Admin Dashboard
     @FXML
     void switchForm(ActionEvent event) {
         if (event.getSource() == home_Btn) {
@@ -239,6 +502,9 @@ public class AdminDashboardController {
             home_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
             addProduct_Btn.setStyle(" -fx-background-color: #fff");
             order_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
+
+            addProductShowListData();
+
         } else if (event.getSource() == order_Btn) {
             main_Form.setVisible(false);
             addProducts_from.setVisible(false);
@@ -250,6 +516,7 @@ public class AdminDashboardController {
         }
     }
 
+//    Sign Out Function
     @FXML
     void signOut_Btn(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -265,11 +532,13 @@ public class AdminDashboardController {
 
     }
 
+//    System Close Function
     @FXML
     void close(ActionEvent event) {
         System.exit(0);
     }
 
+//    System Close Function
     @FXML
     void minimize(ActionEvent event) {
         Stage stage = (Stage) minimize.getScene().getWindow();
@@ -277,4 +546,27 @@ public class AdminDashboardController {
 
     }
 
+//    Initialize Array list and others
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        addProductShowListData();
+
+
+//        Add Product section Product Type
+        ObservableList<String> productType = FXCollections.observableArrayList();
+        productType.add("Snacks");
+        productType.add("Drinks");
+        productType.add("Dessert");
+        productType.add("Gadgets");
+        productType.add("Personal");
+        productType.add("Others");
+        addProducts_ProductType.setItems(productType);
+//        Add Product section Product Status
+        ObservableList<String> status = FXCollections.observableArrayList();
+        status.add("Available");
+        status.add("Not Available");
+
+        addProducts_ProductStatus.setItems(status);
+    }
 }
