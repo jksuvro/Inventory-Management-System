@@ -18,10 +18,14 @@ public class LoginService {
 
         try{
             Connection connection = DatabaseConnection.getConnection();
-            Statement statement = connection.createStatement();
-            String quary = "SELECT * FROM login WHERE username = '" + login.getUsername() + "'" + " AND password = '" + login.getPassword() + "'"; ;
+            connection.createStatement();
+            String quary = "SELECT * FROM login WHERE username = '" + login.getUsername() + "'" + " AND password = '" + login.getPassword() + "'";
             PreparedStatement preparedStatement = connection.prepareStatement(quary);
             ResultSet resultSet = preparedStatement.executeQuery();
+
+            String employee = "SELECT * FROM employee_login WHERE username = '" + login.getUsername() + "'" + " AND password = '" + login.getPassword() + "'";
+            PreparedStatement employeeDB = connection.prepareStatement(employee);
+            ResultSet employeeResultSet = employeeDB.executeQuery();
 
             if (login.getUsername().isEmpty() && login.getPassword().isEmpty()){
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -36,6 +40,12 @@ public class LoginService {
                     alert.setTitle("Login Success");
                     alert.setHeaderText(null);
                     HelloApplication.changeScene("adminDashboard");
+                    System.out.println("Login successful");
+                }else if (employeeResultSet.next()){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Login Success");
+                    alert.setHeaderText(null);
+                    HelloApplication.changeScene("employeeDashboard");
                     System.out.println("Login successful");
                 }
                 else {

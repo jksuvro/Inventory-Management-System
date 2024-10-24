@@ -27,7 +27,7 @@
          <top>
             <AnchorPane prefHeight="50.0" prefWidth="1200.0" styleClass="top-form" stylesheets="@dashboard.css" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fitHeight="32.0" fitWidth="35.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+                  <ImageView fx:id="brandIcon" fitHeight="32.0" fitWidth="35.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                      <image>
                         <Image url="@../../../../../../../img/main-logo.png" />
                      </image>

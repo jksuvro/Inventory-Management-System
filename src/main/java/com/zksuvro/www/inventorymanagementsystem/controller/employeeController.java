@@ -1,3 +1,4 @@
+//employeeController
 package com.zksuvro.www.inventorymanagementsystem.controller;
 
 import com.zksuvro.www.inventorymanagementsystem.HelloApplication;
@@ -30,7 +31,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
-public class AdminDashboardController implements Initializable {
+public class employeeController implements Initializable {
 
     @FXML
     private Label UserName;
@@ -194,7 +195,7 @@ public class AdminDashboardController implements Initializable {
     private Image image;
 
 
-//    ADD PRODUCT ACTION
+    //    ADD PRODUCT ACTION
     @FXML
     void addProducts_AddBtn() {
 
@@ -262,7 +263,7 @@ public class AdminDashboardController implements Initializable {
     }
 
 
-//    TABLE VIEW PRODUCT SHOW LIST
+    //    TABLE VIEW PRODUCT SHOW LIST
     private ResultSet result;
     public ObservableList<ProductData> addProductListData() {
         Connection connection = DatabaseConnection.getConnection();
@@ -304,7 +305,7 @@ public class AdminDashboardController implements Initializable {
         addProducts_TableView.setItems(addProductsList);
     }
 
-//    PRODUCT SELECT ACTION
+    //    PRODUCT SELECT ACTION
     public void addProductsSelect() {
         ProductData prodD = addProducts_TableView.getSelectionModel().getSelectedItem();
         int num = addProducts_TableView.getSelectionModel().getSelectedIndex();
@@ -326,7 +327,7 @@ public class AdminDashboardController implements Initializable {
         ImageData.path = prodD.getImage();
     }
 
-//    PRODUCT EDIT ACTON
+    //    PRODUCT EDIT ACTON
     @FXML
     void addProducts_UpdateBtn() {
         String uri = ImageData.path;
@@ -398,7 +399,7 @@ public class AdminDashboardController implements Initializable {
 
     }
 
-//   PRODUCT DELETE ACTION
+    //   PRODUCT DELETE ACTION
     @FXML
     void addProducts_DeleteBtn() {
         String sql = "DELETE FROM product WHERE product_id = '" + addProducts_ProductId.getText() + "'";
@@ -447,7 +448,7 @@ public class AdminDashboardController implements Initializable {
 
     }
 
-//    PRODUCT IMAGE ACTION
+    //    PRODUCT IMAGE ACTION
     @FXML
     void addProducts_upload(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -461,7 +462,7 @@ public class AdminDashboardController implements Initializable {
             addProducts_imgView.setImage(image);
         }
     }
-//    PRODUCT SEARCH OPTION
+    //    PRODUCT SEARCH OPTION
     public void addProductSearch(){
         FilteredList<ProductData> filter = new FilteredList<>(addProductsList, e -> true);
         addProducts_Search.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -517,7 +518,7 @@ public class AdminDashboardController implements Initializable {
 
 
 
-//    COMMON FUNCTION:
+    //    COMMON FUNCTION:
 //    SCENE CHANGE IN DASHBOARD
     @FXML
     void switchForm(ActionEvent event) {
@@ -554,7 +555,7 @@ public class AdminDashboardController implements Initializable {
         }
     }
 
-//    Sign Out Function
+    //    Sign Out Function
     @FXML
     void signOut_Btn(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -570,13 +571,13 @@ public class AdminDashboardController implements Initializable {
 
     }
 
-//    System Close Function
+    //    System Close Function
     @FXML
     void close(ActionEvent event) {
         System.exit(0);
     }
 
-//    System Close Function
+    //    System Close Function
     @FXML
     void minimize(ActionEvent event) {
         Stage stage = (Stage) minimize.getScene().getWindow();
@@ -586,7 +587,7 @@ public class AdminDashboardController implements Initializable {
 
 
 
-//    Initialize Array list and others
+    //    Initialize Array list and others
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
