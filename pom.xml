@@ -44,11 +44,13 @@
       <version>8.3.0</version>
     </dependency>
     <!-- Font Awesome  -->
+    <!-- https://mvnrepository.com/artifact/de.jensd/fontawesomefx-fontawesome -->
     <dependency>
       <groupId>de.jensd</groupId>
-      <artifactId>fontawesomefx</artifactId>
-      <version>8.2</version>
+      <artifactId>fontawesomefx-fontawesome</artifactId>
+      <version>4.7.0-9.1.2</version>
     </dependency>
+
 
   </dependencies>
 

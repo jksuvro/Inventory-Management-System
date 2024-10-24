@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.AreaChart?>
@@ -20,7 +21,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.AdminDashboardController">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.AdminDashboardController">
    <children>
       <BorderPane layoutX="378.0" layoutY="181.0" prefHeight="800.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -52,11 +53,7 @@
          <left>
             <AnchorPane prefHeight="750.0" prefWidth="280.0" styleClass="nav-form" stylesheets="@dashboard.css" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fitHeight="85.0" fitWidth="98.0" layoutX="98.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../../../../img/user.png" />
-                     </image>
-                  </ImageView>
+                  <FontAwesomeIconView fill="#eeeeee" glyphName="USER" layoutX="106.0" layoutY="122.0" size="100" />
                   <Label layoutX="81.0" layoutY="137.0" prefHeight="46.0" prefWidth="119.0" text="Welcome" textFill="WHITE">
                      <font>
                         <Font name="Poppins Medium" size="24.0" />
@@ -68,25 +65,37 @@
                      </font>
                   </Label>
                   <Line endX="100.0" layoutX="140.0" layoutY="235.0" startX="-100.0" stroke="WHITE" />
-                  <Button fx:id="home_Btn" layoutX="35.0" layoutY="263.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="25.0" prefWidth="213.0" styleClass="nav-btn" stylesheets="@dashboard.css" text="Home" textFill="#0a0a0a">
+                  <Button fx:id="home_Btn" layoutX="35.0" layoutY="263.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="25.0" prefWidth="213.0" styleClass="nav-btn" stylesheets="@dashboard.css" text="Home">
                      <font>
                         <Font name="Poppins Medium" size="14.0" />
                      </font>
+                     <graphic>
+                        <FontAwesomeIconView glyphName="HOME" size="20" />
+                     </graphic>
                   </Button>
                   <Button fx:id="addProduct_Btn" layoutX="35.0" layoutY="311.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="25.0" prefWidth="213.0" styleClass="nav-btn" stylesheets="@dashboard.css" text="Add Product" textFill="#0a0a0a">
                      <font>
                         <Font name="Poppins Medium" size="14.0" />
                      </font>
+                     <graphic>
+                        <FontAwesomeIconView glyphName="PLUS" size="20" />
+                     </graphic>
                   </Button>
                   <Button fx:id="order_Btn" layoutX="34.0" layoutY="360.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="25.0" prefWidth="213.0" styleClass="nav-btn" stylesheets="@dashboard.css" text="Order" textFill="#0a0a0a">
                      <font>
                         <Font name="Poppins Medium" size="14.0" />
                      </font>
+                     <graphic>
+                        <FontAwesomeIconView glyphName="CUBE" size="20" />
+                     </graphic>
                   </Button>
                   <Button fx:id="signOut_Btn" layoutX="28.0" layoutY="688.0" mnemonicParsing="false" onAction="#signOut_Btn" prefHeight="25.0" prefWidth="213.0" styleClass="logout" stylesheets="@dashboard.css" text="Sign out" textFill="#c91a1a">
                      <font>
                         <Font name="Poppins Medium" size="14.0" />
                      </font>
+                     <graphic>
+                        <FontAwesomeIconView fill="#bc2727" glyphName="SIGN_OUT" size="20" />
+                     </graphic>
                   </Button>
                </children>
             </AnchorPane>
