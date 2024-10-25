@@ -1,6 +1,7 @@
 package com.zksuvro.www.inventorymanagementsystem.controller;
 
 import com.zksuvro.www.inventorymanagementsystem.HelloApplication;
+import com.zksuvro.www.inventorymanagementsystem.model.CustomerData;
 import com.zksuvro.www.inventorymanagementsystem.model.ImageData;
 import com.zksuvro.www.inventorymanagementsystem.model.ProductData;
 import com.zksuvro.www.inventorymanagementsystem.service.DatabaseConnection;
@@ -132,25 +133,25 @@ public class AdminDashboardController implements Initializable {
     private Button minimize;
 
     @FXML
-    private TableView<?> order;
-
-    @FXML
     private Button order_Btn;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Brand;
+    private TableView<CustomerData> orderTableView;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Price;
+    private TableColumn<CustomerData, String> order_Col_Brand;
 
     @FXML
-    private TableColumn<?, ?> order_Col_ProductName;
+    private TableColumn<CustomerData, String> order_Col_Price;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Quantity;
+    private TableColumn<CustomerData, String> order_Col_ProductName;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Type;
+    private TableColumn<CustomerData, String> order_Col_Quantity;
+
+    @FXML
+    private TableColumn<CustomerData, String> order_Col_Type;
 
     @FXML
     private TextField orders_Amount;
@@ -168,7 +169,7 @@ public class AdminDashboardController implements Initializable {
     private ComboBox<?> orders_ProductName;
 
     @FXML
-    private ComboBox<?> orders_ProductType;
+    private ComboBox<String> orders_ProductType;
 
     @FXML
     private Spinner<?> orders_Quantity;
@@ -516,6 +517,128 @@ public class AdminDashboardController implements Initializable {
     }
 
 
+public ObservableList<CustomerData> orderListData(){
+        customerId();
+        ObservableList<CustomerData> listData = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM customer WHERE customer_id = '"+customerid+"'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            CustomerData customerD;
+            Statement statement = connection.prepareStatement(sql);
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+                customerD = new CustomerData(result.getInt("customer_id")
+                        , result.getString("type")
+                        , result.getString("brand")
+                        , result.getString("productName")
+                        , result.getInt("quantity")
+                        , result.getDouble("price")
+                        , result.getDate("date"));
+                listData.add(customerD);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return listData;
+}
+
+
+private ObservableList<CustomerData> orderList;
+    public void ordersShowListData(){
+        orderList = orderListData();
+
+        order_Col_Type.setCellValueFactory(new PropertyValueFactory<>("type"));
+        order_Col_Brand.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        order_Col_ProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        order_Col_Quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        order_Col_Price.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        orderTableView.setItems(orderList);
+    }
+
+private int customerid;
+    public void customerId(){
+        String customerId = "SELECT id FROM customer";
+        Connection connection = DatabaseConnection.getConnection();
+        ObservableList<ProductData> productlist = FXCollections.observableArrayList();
+        try {
+            connection.prepareStatement(customerId);
+            result = connection.createStatement().executeQuery(customerId);
+
+            int checkId = 0;
+
+            while (result.next()) {
+//                GET LAST CUSTOMER ID
+                checkId = result.getInt("customer_id");
+            }
+            String checkData = "SELECT * FROM customer_receipt";
+            Statement statement = connection.createStatement();
+            result = statement.executeQuery(checkData);
+
+            while (result.next()) {
+                customerid = result.getInt("customer_id");
+            }
+            if (checkId == 0){
+                customerid+=1;
+            }else if(checkId == customerid){
+                customerid+=1;
+            }
+
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private String[] oderListType = {"Snacks", "Drinks", "Dessert", "Gadgets", "Personal", "Others"};
+    public void oderListType(){
+        List<String> oderList = new ArrayList<>();
+
+        for(String oderType : oderListType){
+            oderList.add(oderType);
+        }
+        ObservableList<String> listData = FXCollections.observableArrayList(oderList);
+        orders_ProductType.setItems(listData);
+        oderListBrand();
+    }
+
+    public void oderListBrand(){
+        String sql = "SELECT * FROM product WHERE type='"
+                +orders_ProductType.getSelectionModel().getSelectedItem()
+                +"' and status =  'Available'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            result = preparedStatement.executeQuery();
+
+            ObservableList listData = FXCollections.observableArrayList();
+            while (result.next()) {
+                listData.add(result.getString("brand"));
+            }
+            orders_BrandName.setItems(listData);
+            orderListProductName();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void orderListProductName(){
+        String sql = "SELECT productName FROM product WHERE brand = '"
+                + orders_BrandName.getSelectionModel().getSelectedItem() +"'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            result = preparedStatement.executeQuery();
+            ObservableList listData = FXCollections.observableArrayList();
+            while (result.next()) {
+                listData.add(result.getString("productName"));
+            }
+            orders_ProductName.setItems(listData);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 
 //    COMMON FUNCTION:
 //    SCENE CHANGE IN DASHBOARD
@@ -551,6 +674,11 @@ public class AdminDashboardController implements Initializable {
             home_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
             addProduct_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
             order_Btn.setStyle(" -fx-background-color: #fff");
+
+            oderListType();
+            oderListBrand();
+            ordersShowListData();
+            orderListProductName();
         }
     }
 
@@ -590,7 +718,12 @@ public class AdminDashboardController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+
         addProductShowListData();
+        ordersShowListData();
+        oderListType();
+        oderListBrand();
+        orderListProductName();
 
 
 //        Add Product section Product Type

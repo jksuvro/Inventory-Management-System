@@ -224,7 +224,7 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="addProducts_from" prefHeight="750.0" prefWidth="920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane fx:id="addProducts_from" prefHeight="750.0" prefWidth="920.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <BorderPane layoutX="14.0" layoutY="12.0" prefHeight="725.0" prefWidth="289.0" stylesheets="@dashboard.css">
                            <styleClass>
@@ -331,7 +331,7 @@
                         </BorderPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="orders_form" layoutX="148.0" layoutY="118.0" prefHeight="750.0" prefWidth="920.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane fx:id="orders_form" layoutX="148.0" layoutY="118.0" prefHeight="750.0" prefWidth="920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <AnchorPane layoutX="18.0" layoutY="15.0" prefHeight="719.0" prefWidth="547.0" stylesheets="@dashboard.css" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="355.0" AnchorPane.topAnchor="15.0">
                            <styleClass>
@@ -339,7 +339,7 @@
                               <String fx:value="shadow" />
                            </styleClass>
                            <children>
-                              <TableView fx:id="order" layoutX="12.0" layoutY="11.0" prefHeight="675.0" prefWidth="524.0" stylesheets="@dashboard.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="11.0">
+                              <TableView fx:id="orderTableView" layoutX="12.0" layoutY="11.0" prefHeight="675.0" prefWidth="524.0" stylesheets="@dashboard.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="11.0">
                                 <columns>
                                   <TableColumn fx:id="order_Col_Type" prefWidth="75.0" text="Type" />
                                   <TableColumn fx:id="order_Col_Brand" prefWidth="88.0" text="Brand" />
@@ -361,19 +361,19 @@
                                     <Font name="Poppins SemiBold" size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="orders_ProductType" layoutX="142.0" layoutY="39.0" prefHeight="25.0" prefWidth="166.0" promptText="Choose" styleClass="text-field" stylesheets="@dashboard.css" />
+                              <ComboBox fx:id="orders_ProductType" layoutX="142.0" layoutY="39.0" onAction="#oderListType" prefHeight="25.0" prefWidth="166.0" promptText="Choose" styleClass="text-field" stylesheets="@dashboard.css" />
                               <Label layoutX="29.0" layoutY="92.0" text="Brand Name:">
                                  <font>
                                     <Font name="Poppins SemiBold" size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="orders_BrandName" layoutX="142.0" layoutY="90.0" prefHeight="25.0" prefWidth="167.0" promptText="Choose" styleClass="text-field" stylesheets="@dashboard.css" />
+                              <ComboBox fx:id="orders_BrandName" layoutX="142.0" layoutY="90.0" onAction="#oderListBrand" prefHeight="25.0" prefWidth="167.0" promptText="Choose" styleClass="text-field" stylesheets="@dashboard.css" />
                               <Label layoutX="29.0" layoutY="138.0" text="Product Name:">
                                  <font>
                                     <Font name="Poppins SemiBold" size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="orders_ProductName" layoutX="142.0" layoutY="136.0" prefHeight="25.0" prefWidth="167.0" promptText="Choose" styleClass="text-field" stylesheets="@dashboard.css" />
+                              <ComboBox fx:id="orders_ProductName" layoutX="142.0" layoutY="136.0" onAction="#orderListProductName" prefHeight="25.0" prefWidth="167.0" promptText="Choose" styleClass="text-field" stylesheets="@dashboard.css" />
                               <Label layoutX="46.0" layoutY="304.0" text="Total:">
                                  <font>
                                     <Font name="Poppins ExtraBold" size="24.0" />
