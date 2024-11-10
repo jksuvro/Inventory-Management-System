@@ -2,6 +2,7 @@
 package com.zksuvro.www.inventorymanagementsystem.controller;
 
 import com.zksuvro.www.inventorymanagementsystem.HelloApplication;
+import com.zksuvro.www.inventorymanagementsystem.model.CustomerData;
 import com.zksuvro.www.inventorymanagementsystem.model.ImageData;
 import com.zksuvro.www.inventorymanagementsystem.model.ProductData;
 import com.zksuvro.www.inventorymanagementsystem.service.DatabaseConnection;
@@ -133,25 +134,25 @@ public class employeeController implements Initializable {
     private Button minimize;
 
     @FXML
-    private TableView<?> order;
-
-    @FXML
     private Button order_Btn;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Brand;
+    private TableView<CustomerData> orderTableView;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Price;
+    private TableColumn<CustomerData, String> order_Col_Brand;
 
     @FXML
-    private TableColumn<?, ?> order_Col_ProductName;
+    private TableColumn<CustomerData, Number> order_Col_Price;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Quantity;
+    private TableColumn<CustomerData, String> order_Col_ProductName;
 
     @FXML
-    private TableColumn<?, ?> order_Col_Type;
+    private TableColumn<CustomerData, Number> order_Col_Quantity;
+
+    @FXML
+    private TableColumn<CustomerData, String> order_Col_Type;
 
     @FXML
     private TextField orders_Amount;
@@ -169,10 +170,10 @@ public class employeeController implements Initializable {
     private ComboBox<?> orders_ProductName;
 
     @FXML
-    private ComboBox<?> orders_ProductType;
+    private ComboBox<String> orders_ProductType;
 
     @FXML
-    private Spinner<?> orders_Quantity;
+    private Spinner<Integer> orders_Quantity;
 
     @FXML
     private Button orders_Recipe;
@@ -207,7 +208,7 @@ public class employeeController implements Initializable {
                     || addProducts_ProductName.getText().isEmpty()
                     || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
                     || addProducts_ProductPrice.getText().isEmpty()
-                    || ImageData.path == ""){
+                    || ImageData.path.isEmpty() ){
 
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error Message");
@@ -406,12 +407,12 @@ public class employeeController implements Initializable {
         try {
             Alert alert;
             if (addProducts_ProductId.getText().isEmpty()
-//                    || addProducts_ProductType.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductType.getSelectionModel().getSelectedItem() == null
                     || addProducts_ProductBrand.getText().isEmpty()
                     || addProducts_ProductName.getText().isEmpty()
-//                    || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
                     || addProducts_ProductPrice.getText().isEmpty()
-                    || ImageData.path == ""){
+                    || ImageData.path.isEmpty()){
 
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error Message");
@@ -491,20 +492,101 @@ public class employeeController implements Initializable {
         addProducts_TableView.setItems(sortedList);
     }
 
+    //    Product Type List
+    private String[] listType = {"Snacks", "Drinks", "Dessert", "Gadgets", "Personal Product", "Others"};
+    public void addProductListType(){
+        List<String> listT = new ArrayList<>();
+        for(String data: listType){
+            listT.add(data);
+        }
+        ObservableList<String> listData = FXCollections.observableList(listT);
+        addProducts_ProductType.setItems(listData);
+    }
+
+    //    Product Status
+    private String[] listStatus = {"Available", "Not Available"};
+    public void addProductListStatus(){
+        List<String> listS = new ArrayList<>();
+        for(String data: listStatus){
+            listS.add(data);
+        }
+        ObservableList<String> listData = FXCollections.observableList(listS);
+        addProducts_ProductStatus.setItems(listData);
+    }
+
+
 
     @FXML
     void order_Btn(ActionEvent event) {
 
     }
-    @FXML
-    void orders_AddBtn(ActionEvent event) {
-
-    }
 
     @FXML
-    void orders_PayBtn(ActionEvent event) {
+    public void orders_AddBtn(){
+        customerId();
+        String sql = "INSERT INTO customer (customer_id, type, brand, productName, quantity, price, date)"
+                + "VALUES(?,?,?,?,?,?,?)";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
 
+            String checkData = "SELECT * FROM product WHERE productName = '"
+                    + orders_ProductName.getSelectionModel().getSelectedItem() + "'";
+            double totalPrice = 0;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(checkData);
+            if (resultSet.next()) {
+                totalPrice = resultSet.getDouble("price");
+            }
+            double totalPData = (totalPrice*quantity);
+            Alert alert;
+            if (orders_ProductType.getSelectionModel().getSelectedItem() == null
+                    ||(String) orders_BrandName.getSelectionModel().getSelectedItem() == null
+                    ||(String) orders_ProductName.getSelectionModel().getSelectedItem() == null
+                    || totalPData == 0) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all the required fields");
+                alert.showAndWait();
+            } else {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, String.valueOf(customerid));
+                preparedStatement.setString(2, orders_ProductType.getSelectionModel().getSelectedItem());
+                preparedStatement.setString(3, (String) orders_BrandName.getSelectionModel().getSelectedItem());
+                preparedStatement.setString(4, (String) orders_ProductName.getSelectionModel().getSelectedItem());
+                preparedStatement.setString(5, String.valueOf(quantity));
+
+                preparedStatement.setString(6, String.valueOf(totalPData));
+
+                Date date = new Date();
+                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                preparedStatement.setString(7, String.valueOf(sqlDate));
+                preparedStatement.executeUpdate();
+
+                ordersShowListData();
+                ordersDisplayTotal();
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
+    private double totalP;
+    public void ordersDisplayTotal(){
+        customerId();
+        String sql = "SELECT SUM(price) FROM customer WHERE customer_id = '"+customerid+"'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                totalP = resultSet.getDouble("SUM(price)");
+            }
+            orders_Total.setText("$"+ String.valueOf(totalP));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     void orders_Recipe(ActionEvent event) {
@@ -515,6 +597,214 @@ public class employeeController implements Initializable {
     void orders_ResetBtn(ActionEvent event) {
 
     }
+
+
+    @FXML
+    void orders_PayBtn(ActionEvent event) {
+        customerId();
+        String sql = "INSERT INTO customer_receipt (customer_id, total, date)";
+
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            Alert alert;
+            if(totalP > 0) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure?");
+                Optional<ButtonType> option =  alert.showAndWait();
+                if (option.get() == ButtonType.OK){
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setString(1, String.valueOf(customerid));
+                    preparedStatement.setDouble(2, totalP);
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                    preparedStatement.setString(2, sqlDate.toString());
+                    preparedStatement.executeUpdate();
+                } else return;
+            }else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid Total");
+                alert.showAndWait();
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private double amountP;
+    private double balanceP;
+    public void orderAmount(){
+        Alert alert;
+
+        if(!orders_Amount.getText().isEmpty()) {
+            if (totalP > 0) {
+                amountP = Double.parseDouble(orders_Amount.getText());
+                if (amountP > totalP) {
+                    balanceP = (amountP - totalP);
+                    orders_Balance.setText("$" + String.valueOf(balanceP));
+                } else {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid Total");
+                    alert.showAndWait();
+                    orders_Amount.setText("");
+                }
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid Total");
+                alert.showAndWait();
+            }
+        }else {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Invalid Total");
+            alert.showAndWait();
+        }
+    }
+
+    private SpinnerValueFactory<Integer> spinner;
+    public void orderSpinner(){
+        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+        orders_Quantity.setValueFactory(spinner);
+    }
+    private int quantity;
+    public void orderShowSpinnerValue(){
+        quantity = orders_Quantity.getValue();
+    }
+
+
+    private ObservableList<CustomerData> orderList;
+    public void ordersShowListData(){
+        orderList = orderListData();
+
+        order_Col_Type.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getType()));
+        order_Col_Brand.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getBrand()));
+        order_Col_ProductName.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getProductName()));
+        order_Col_Quantity.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getQuantity()));
+        order_Col_Price.setCellValueFactory(c-> new SimpleDoubleProperty(c.getValue().getPrice()));
+
+        orderTableView.setItems(orderList);
+        ordersDisplayTotal();
+    }
+
+    public ObservableList<CustomerData> orderListData(){
+        customerId();
+        ObservableList<CustomerData> listData = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM customer WHERE customer_id = '"+customerid+"'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            CustomerData customerD;
+            Statement statement = connection.prepareStatement(sql);
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+                customerD = new CustomerData(result.getInt("customer_id")
+                        , result.getString("type")
+                        , result.getString("brand")
+                        , result.getString("productName")
+                        , result.getInt("quantity")
+                        , result.getDouble("price")
+                        , result.getDate("date"));
+                listData.add(customerD);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return listData;
+    }
+
+    private int customerid;
+    public void customerId(){
+        String customerId = "SELECT * FROM customer";
+        Connection connection = DatabaseConnection.getConnection();
+
+        try {
+            connection.prepareStatement(customerId);
+            result = connection.createStatement().executeQuery(customerId);
+
+            int checkId = 0;
+
+            while (result.next()) {
+//                GET LAST CUSTOMER ID
+                customerid = result.getInt("customer_id");
+            }
+            String checkData = "SELECT * FROM customer_receipt";
+            Statement statement = connection.createStatement();
+            result = statement.executeQuery(checkData);
+
+            while (result.next()) {
+                checkId = result.getInt("customer_id");
+            }
+            if (customerid == 0){
+                customerid+=1;
+            }else if(checkId == customerid){
+                customerid+=1;
+            }
+
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private String[] oderListType = {"Snacks", "Drinks", "Dessert", "Gadgets", "Personal Product", "Others"};
+    public void oderListType(){
+        List<String> oderList = new ArrayList<>();
+
+        for(String oderType : oderListType){
+            oderList.add(oderType);
+        }
+        ObservableList<String> listData = FXCollections.observableArrayList(oderList);
+        orders_ProductType.setItems(listData);
+        oderListBrand();
+    }
+
+    public void oderListBrand(){
+        String sql = "SELECT * FROM product WHERE type='"
+                +orders_ProductType.getSelectionModel().getSelectedItem()
+                +"' and status =  'Available'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            result = preparedStatement.executeQuery();
+
+            ObservableList listData = FXCollections.observableArrayList();
+            while (result.next()) {
+                listData.add(result.getString("brand"));
+            }
+            orders_BrandName.setItems(listData);
+            orderListProductName();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void orderListProductName(){
+        String sql = "SELECT productName FROM product WHERE brand = '"
+                + orders_BrandName.getSelectionModel().getSelectedItem() +"'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            result = preparedStatement.executeQuery();
+            ObservableList listData = FXCollections.observableArrayList();
+            while (result.next()) {
+                listData.add(result.getString("productName"));
+            }
+            orders_ProductName.setItems(listData);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 
@@ -539,10 +829,11 @@ public class employeeController implements Initializable {
             addProduct_Btn.setStyle(" -fx-background-color: #fff");
             order_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
 
-
+            addProductListType();
             addProductListData();
             addProductSearch();
             addProductShowListData();
+            addProductListStatus();
 
         } else if (event.getSource() == order_Btn) {
             main_Form.setVisible(false);
@@ -552,6 +843,12 @@ public class employeeController implements Initializable {
             home_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
             addProduct_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
             order_Btn.setStyle(" -fx-background-color: #fff");
+
+            oderListType();
+            oderListBrand();
+            ordersShowListData();
+            orderListProductName();
+            orderSpinner();
         }
     }
 
@@ -591,24 +888,17 @@ public class employeeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+
         addProductShowListData();
+        addProductListType();
+        addProductListStatus();
 
+        ordersShowListData();
+        oderListType();
+        oderListBrand();
+        orderListProductName();
+        orderSpinner();
 
-//        Add Product section Product Type
-        ObservableList<String> productType = FXCollections.observableArrayList();
-        productType.add("Snacks");
-        productType.add("Drinks");
-        productType.add("Dessert");
-        productType.add("Gadgets");
-        productType.add("Personal");
-        productType.add("Others");
-        addProducts_ProductType.setItems(productType);
-//        Add Product section Product Status
-        ObservableList<String> status = FXCollections.observableArrayList();
-        status.add("Available");
-        status.add("Not Available");
-
-        addProducts_ProductStatus.setItems(status);
 
         File brandingFile = new File("img/main-logo.png");
         Image brandingImage = new Image(brandingFile.toURI().toString());

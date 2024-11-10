@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -142,13 +143,13 @@ public class AdminDashboardController implements Initializable {
     private TableColumn<CustomerData, String> order_Col_Brand;
 
     @FXML
-    private TableColumn<CustomerData, String> order_Col_Price;
+    private TableColumn<CustomerData, Number> order_Col_Price;
 
     @FXML
     private TableColumn<CustomerData, String> order_Col_ProductName;
 
     @FXML
-    private TableColumn<CustomerData, String> order_Col_Quantity;
+    private TableColumn<CustomerData, Number> order_Col_Quantity;
 
     @FXML
     private TableColumn<CustomerData, String> order_Col_Type;
@@ -172,7 +173,7 @@ public class AdminDashboardController implements Initializable {
     private ComboBox<String> orders_ProductType;
 
     @FXML
-    private Spinner<?> orders_Quantity;
+    private Spinner<Integer> orders_Quantity;
 
     @FXML
     private Button orders_Recipe;
@@ -194,6 +195,98 @@ public class AdminDashboardController implements Initializable {
 
     private Image image;
 
+//   Home
+    public void homeDisplayTotalOrders(){
+        Date date = new Date();
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+        String sql = "SELECT COUNT(id) FROM customer WHERE date ='"+sqlDate+"' ";
+        Connection connection = DatabaseConnection.getConnection();
+        int countOrders = 0;
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()){
+                countOrders = resultSet.getInt("COUNT(id)");
+            }
+            home_NumberOrder.setText(String.valueOf(countOrders));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void homeTotalIncome(){
+        String sql = "SELECT SUM(total) FROM customer_receipt";
+        Connection connection = DatabaseConnection.getConnection();
+        double totalIncome = 0;
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()){
+                totalIncome = resultSet.getDouble("SUM(total)");
+            }
+            home_TotalIncome.setText("$"+ String.valueOf(totalIncome));
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void homeAvailableProducts(){
+        String sql = "SELECT COUNT(id) FROM product WHERE status = 'Available'";
+        Connection connection = DatabaseConnection.getConnection();
+        int countAP = 0;
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()){
+                countAP = resultSet.getInt("COUNT(id)");
+            }
+            home_AvailableProducts.setText(String.valueOf(countAP));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void homeIncomeChart(){
+        home_IncomeChart.getData().clear();
+
+        String sql = "SELECT date, SUM(total) FROM customer_receipt GROUP BY date ORDER BY TIMESTAMP(date) ASC LIMIT 6";
+        Connection connection = DatabaseConnection.getConnection();
+        try {
+            XYChart.Series chart = new XYChart.Series();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while(resultSet.next()){
+                chart.getData().add(new XYChart.Data(resultSet.getString(1), resultSet.getDouble(2)));
+            }
+            home_IncomeChart.getData().addAll(chart);
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void homeOrdersChart(){
+        home_OrderChart.getData().clear();
+        String sql = "SELECT date, COUNT(id) FROM customer GROUP BY date ORDER BY TIMESTAMP(date) ASC LIMIT 5";
+
+        Connection connection = DatabaseConnection.getConnection();
+
+        try{
+            XYChart.Series chart = new XYChart.Series();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()){
+                chart.getData().add(new XYChart.Data(resultSet.getString(1), resultSet.getInt(2)));
+            }
+            home_OrderChart.getData().addAll(chart);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
 
 //    ADD PRODUCT ACTION
     @FXML
@@ -207,7 +300,7 @@ public class AdminDashboardController implements Initializable {
                     || addProducts_ProductName.getText().isEmpty()
                     || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
                     || addProducts_ProductPrice.getText().isEmpty()
-                    || ImageData.path == ""){
+                    || ImageData.path.isEmpty() ){
 
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error Message");
@@ -406,12 +499,12 @@ public class AdminDashboardController implements Initializable {
         try {
             Alert alert;
             if (addProducts_ProductId.getText().isEmpty()
-//                    || addProducts_ProductType.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductType.getSelectionModel().getSelectedItem() == null
                     || addProducts_ProductBrand.getText().isEmpty()
                     || addProducts_ProductName.getText().isEmpty()
-//                    || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
+                    || addProducts_ProductStatus.getSelectionModel().getSelectedItem() == null
                     || addProducts_ProductPrice.getText().isEmpty()
-                    || ImageData.path == ""){
+                    || ImageData.path.isEmpty()){
 
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error Message");
@@ -491,33 +584,247 @@ public class AdminDashboardController implements Initializable {
         addProducts_TableView.setItems(sortedList);
     }
 
+//    Product Type List
+    private String[] listType = {"Snacks", "Drinks", "Dessert", "Gadgets", "Personal Product", "Others"};
+    public void addProductListType(){
+        List<String> listT = new ArrayList<>();
+        for(String data: listType){
+            listT.add(data);
+        }
+        ObservableList<String> listData = FXCollections.observableList(listT);
+        addProducts_ProductType.setItems(listData);
+    }
+
+//    Product Status
+    private String[] listStatus = {"Available", "Not Available"};
+    public void addProductListStatus(){
+        List<String> listS = new ArrayList<>();
+        for(String data: listStatus){
+            listS.add(data);
+        }
+        ObservableList<String> listData = FXCollections.observableList(listS);
+        addProducts_ProductStatus.setItems(listData);
+    }
+
+
 
     @FXML
     void order_Btn(ActionEvent event) {
 
     }
-    @FXML
-    void orders_AddBtn(ActionEvent event) {
-
-    }
 
     @FXML
-    void orders_PayBtn(ActionEvent event) {
+    public void orders_AddBtn(){
+        customerId();
+        String sql = "INSERT INTO customer (customer_id, type, brand, productName, quantity, price, date)"
+                + "VALUES(?,?,?,?,?,?,?)";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
 
+            String checkData = "SELECT * FROM product WHERE productName = '"
+                    + orders_ProductName.getSelectionModel().getSelectedItem() + "'";
+            double totalPrice = 0;
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(checkData);
+            if (resultSet.next()) {
+                totalPrice = resultSet.getDouble("price");
+            }
+            double totalPData = (totalPrice*quantity);
+            Alert alert;
+            if (orders_ProductType.getSelectionModel().getSelectedItem() == null
+                    ||(String) orders_BrandName.getSelectionModel().getSelectedItem() == null
+                    ||(String) orders_ProductName.getSelectionModel().getSelectedItem() == null
+                    || totalPData == 0) {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please fill all the required fields");
+                    alert.showAndWait();
+            } else {
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setString(1, String.valueOf(customerid));
+                    preparedStatement.setString(2, orders_ProductType.getSelectionModel().getSelectedItem());
+                    preparedStatement.setString(3, (String) orders_BrandName.getSelectionModel().getSelectedItem());
+                    preparedStatement.setString(4, (String) orders_ProductName.getSelectionModel().getSelectedItem());
+                    preparedStatement.setString(5, String.valueOf(quantity));
+
+                    preparedStatement.setString(6, String.valueOf(totalPData));
+
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                    preparedStatement.setString(7, String.valueOf(sqlDate));
+                    preparedStatement.executeUpdate();
+
+                ordersShowListData();
+                ordersDisplayTotal();
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    private double totalP;
+    public void ordersDisplayTotal(){
+        customerId();
+        String sql = "SELECT SUM(price) FROM customer WHERE customer_id = '"+customerid+"'";
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                totalP = resultSet.getDouble("SUM(price)");
+            }
+            orders_Total.setText("$"+ String.valueOf(totalP));
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
-    @FXML
-    void orders_Recipe(ActionEvent event) {
-
-    }
 
     @FXML
     void orders_ResetBtn(ActionEvent event) {
+        customerId();
+        String sql = "DELETE FROM customer WHERE customer_id = '"+customerid+"'";
+        Connection connection = DatabaseConnection.getConnection();
 
+        try{
+            if(!orderTableView.getItems().isEmpty()){
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to reset?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    Statement statement = connection.createStatement();
+                    statement.execute(sql);
+
+                    ordersShowListData();
+
+                    totalP = 0;
+                    balanceP = 0;
+                    amountP = 0;
+
+                    orders_Balance.setText("$0.0");
+                    orders_Total.setText("$0.0");
+                    orders_Amount.setText("");
+                }
+
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
 
-public ObservableList<CustomerData> orderListData(){
+    @FXML
+    void orders_Recipe() {
+
+    }
+
+    @FXML
+    void ordersPayBtn(ActionEvent event) {
+        customerId();
+        String sql = "INSERT INTO customer_receipt (customer_id, total, amount, balance, date)"
+                + "VALUES(?, ?, ?, ?, ?)";
+
+        Connection connection = DatabaseConnection.getConnection();
+        try{
+            Alert alert;
+            if(totalP > 0 || orders_Amount.getText().isEmpty() || amountP == 0) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure?");
+                Optional<ButtonType> option =  alert.showAndWait();
+                if (option.get() == ButtonType.OK){
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                    preparedStatement.setString(1, String.valueOf(customerid));
+                    preparedStatement.setString(2, String.valueOf(totalP));
+                    preparedStatement.setString(3, String.valueOf(amountP));
+                    preparedStatement.setString(4, String.valueOf(balanceP));
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                    preparedStatement.setString(5, String.valueOf(sqlDate));
+
+                    preparedStatement.executeUpdate();
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully ordered");
+                    alert.showAndWait();
+
+                    ordersShowListData();
+
+                    totalP = 0;
+                    balanceP = 0;
+                    amountP = 0;
+
+                    orders_Balance.setText("$0.0");
+                    orders_Amount.setText("");
+                } else return;
+            }else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid Total");
+                alert.showAndWait();
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private double amountP;
+    private double balanceP;
+    public void orderAmount(){
+        Alert alert;
+
+        if(!orders_Amount.getText().isEmpty()) {
+            amountP = Double.parseDouble(orders_Amount.getText());
+
+            if (totalP > 0) {
+                if (amountP > totalP) {
+                    balanceP = (amountP - totalP);
+                    orders_Balance.setText("$" + String.valueOf(balanceP));
+                } else {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Invalid Total");
+                    alert.showAndWait();
+                    orders_Amount.setText("");
+                }
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Invalid Total");
+                alert.showAndWait();
+            }
+        }
+        else {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Invalid Total");
+            alert.showAndWait();
+        }
+    }
+
+    private SpinnerValueFactory<Integer> spinner;
+    public void orderSpinner(){
+        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+        orders_Quantity.setValueFactory(spinner);
+    }
+    private int quantity;
+    public void orderShowSpinnerValue(){
+         quantity = orders_Quantity.getValue();
+    }
+
+
+    public ObservableList<CustomerData> orderListData(){
         customerId();
         ObservableList<CustomerData> listData = FXCollections.observableArrayList();
         String sql = "SELECT * FROM customer WHERE customer_id = '"+customerid+"'";
@@ -541,27 +848,26 @@ public ObservableList<CustomerData> orderListData(){
             e.printStackTrace();
         }
         return listData;
-}
-
-
-private ObservableList<CustomerData> orderList;
+    }
+    private ObservableList<CustomerData> orderList;
     public void ordersShowListData(){
         orderList = orderListData();
 
-        order_Col_Type.setCellValueFactory(new PropertyValueFactory<>("type"));
-        order_Col_Brand.setCellValueFactory(new PropertyValueFactory<>("brand"));
-        order_Col_ProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        order_Col_Quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        order_Col_Price.setCellValueFactory(new PropertyValueFactory<>("price"));
+        order_Col_Type.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getType()));
+        order_Col_Brand.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getBrand()));
+        order_Col_ProductName.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getProductName()));
+        order_Col_Quantity.setCellValueFactory(c-> new SimpleIntegerProperty(c.getValue().getQuantity()));
+        order_Col_Price.setCellValueFactory(c-> new SimpleDoubleProperty(c.getValue().getPrice()));
 
         orderTableView.setItems(orderList);
+        ordersDisplayTotal();
     }
 
 private int customerid;
     public void customerId(){
-        String customerId = "SELECT id FROM customer";
+        String customerId = "SELECT * FROM customer";
         Connection connection = DatabaseConnection.getConnection();
-        ObservableList<ProductData> productlist = FXCollections.observableArrayList();
+
         try {
             connection.prepareStatement(customerId);
             result = connection.createStatement().executeQuery(customerId);
@@ -570,16 +876,16 @@ private int customerid;
 
             while (result.next()) {
 //                GET LAST CUSTOMER ID
-                checkId = result.getInt("customer_id");
+                customerid = result.getInt("customer_id");
             }
             String checkData = "SELECT * FROM customer_receipt";
             Statement statement = connection.createStatement();
             result = statement.executeQuery(checkData);
 
             while (result.next()) {
-                customerid = result.getInt("customer_id");
+                checkId = result.getInt("customer_id");
             }
-            if (checkId == 0){
+            if (customerid == 0){
                 customerid+=1;
             }else if(checkId == customerid){
                 customerid+=1;
@@ -591,7 +897,7 @@ private int customerid;
         }
     }
 
-    private String[] oderListType = {"Snacks", "Drinks", "Dessert", "Gadgets", "Personal", "Others"};
+    private String[] oderListType = {"Snacks", "Drinks", "Dessert", "Gadgets", "Personal Product", "Others"};
     public void oderListType(){
         List<String> oderList = new ArrayList<>();
 
@@ -652,6 +958,13 @@ private int customerid;
             home_Btn.setStyle(" -fx-background-color: #fff");
             addProduct_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
             order_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
+
+            homeDisplayTotalOrders();
+            homeTotalIncome();
+            homeAvailableProducts();
+            homeIncomeChart();
+            homeOrdersChart();
+
         } else if (event.getSource()== addProduct_Btn) {
             main_Form.setVisible(false);
             addProducts_from.setVisible(true);
@@ -661,10 +974,11 @@ private int customerid;
             addProduct_Btn.setStyle(" -fx-background-color: #fff");
             order_Btn.setStyle(" -fx-background-color: rgba(255, 255, 255, 0.7)");
 
-
+            addProductListType();
             addProductListData();
             addProductSearch();
             addProductShowListData();
+            addProductListStatus();
 
         } else if (event.getSource() == order_Btn) {
             main_Form.setVisible(false);
@@ -679,6 +993,7 @@ private int customerid;
             oderListBrand();
             ordersShowListData();
             orderListProductName();
+            orderSpinner();
         }
     }
 
@@ -718,29 +1033,23 @@ private int customerid;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        homeDisplayTotalOrders();
+        homeTotalIncome();
+        homeAvailableProducts();
+        homeIncomeChart();
+        homeOrdersChart();
+
 
         addProductShowListData();
+        addProductListType();
+        addProductListStatus();
+
         ordersShowListData();
         oderListType();
         oderListBrand();
         orderListProductName();
+        orderSpinner();
 
-
-//        Add Product section Product Type
-        ObservableList<String> productType = FXCollections.observableArrayList();
-        productType.add("Snacks");
-        productType.add("Drinks");
-        productType.add("Dessert");
-        productType.add("Gadgets");
-        productType.add("Personal");
-        productType.add("Others");
-        addProducts_ProductType.setItems(productType);
-//        Add Product section Product Status
-        ObservableList<String> status = FXCollections.observableArrayList();
-        status.add("Available");
-        status.add("Not Available");
-
-        addProducts_ProductStatus.setItems(status);
 
         File brandingFile = new File("img/main-logo.png");
         Image brandingImage = new Image(brandingFile.toURI().toString());
