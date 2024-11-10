@@ -19,6 +19,7 @@ public class HelloApplication extends Application {
         stage.setTitle("Login");
         stage.setScene(scene);
         stage.show();
+
     }
 
     public static void main(String[] args) {
@@ -31,6 +32,7 @@ public class HelloApplication extends Application {
             Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle("Registration");
             stage.setScene(scene);
+
 
         }catch (IOException ex){
             ex.printStackTrace();

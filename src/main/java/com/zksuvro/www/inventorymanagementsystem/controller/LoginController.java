@@ -12,6 +12,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -30,6 +32,10 @@ public class LoginController implements Initializable {
     @FXML
     private ImageView leftBrandImage;
 
+
+    @FXML
+    private AnchorPane loginPane;
+
     @FXML
     private Button loginBtn;
 
@@ -44,6 +50,9 @@ public class LoginController implements Initializable {
 
     @FXML
     private PasswordField passwordField;
+
+    private double x=0;
+    private double y=0;
 
     @FXML
     void LoginAction(ActionEvent event) {
@@ -73,6 +82,17 @@ public class LoginController implements Initializable {
         Stage stage = (Stage) closeBtn.getScene().getWindow();
         stage.close();
     }
+    @FXML
+    void loginPane_Dragged(MouseEvent event) {
+        Stage stage = (Stage) loginPane.getScene().getWindow();
+        stage.setX(event.getScreenX() - x);
+        stage.setY(event.getScreenY() - y);
+    }
+    @FXML
+    void loginPane_Pressed(MouseEvent event) {
+        x=event.getScreenX();
+        y=event.getScreenY();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -80,6 +100,7 @@ public class LoginController implements Initializable {
         Image brandingImage = new Image(brandingFile.toURI().toString());
         leftBrandImage.setImage(brandingImage);
     }
+
 
 }
 

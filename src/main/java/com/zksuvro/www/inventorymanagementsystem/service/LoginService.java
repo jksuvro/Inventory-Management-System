@@ -41,6 +41,7 @@ public class LoginService {
                     alert.setHeaderText(null);
                     HelloApplication.changeScene("adminDashboard");
                     System.out.println("Login successful");
+
                 }else if (employeeResultSet.next()){
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Login Success");

@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -903,5 +904,14 @@ public class employeeController implements Initializable {
         File brandingFile = new File("img/main-logo.png");
         Image brandingImage = new Image(brandingFile.toURI().toString());
         brandIcon.setImage(brandingImage);
+    }
+
+    public void adminPane_Dragged(MouseEvent mouseEvent) {
+    }
+
+    public void adminPane_Pressed(MouseEvent mouseEvent) {
+    }
+
+    public void ordersPayBtn(ActionEvent event) {
     }
 }

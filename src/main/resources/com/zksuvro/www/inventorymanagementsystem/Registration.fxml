@@ -14,7 +14,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.registrationController">
+<AnchorPane fx:id="registrationPane" onMouseDragged="#registrationPane_Dragged" onMousePressed="#registrationPane_Pressed" prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.registrationController">
    <children>
       <AnchorPane layoutX="146.0" layoutY="197.0" prefHeight="660.0" prefWidth="400.0" styleClass="left-from" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <stylesheets>

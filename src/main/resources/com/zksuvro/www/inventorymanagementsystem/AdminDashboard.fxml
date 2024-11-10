@@ -21,7 +21,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.AdminDashboardController">
+<AnchorPane fx:id="adminPane" onMouseDragged="#adminPane_Dragged" onMousePressed="#adminPane_Pressed" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.AdminDashboardController">
    <children>
       <BorderPane layoutX="378.0" layoutY="181.0" prefHeight="800.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -59,20 +59,12 @@
                         <Font name="Poppins Medium" size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="UserName" layoutX="77.0" layoutY="174.0" text="Admin" textFill="WHITE">
+                  <Label fx:id="UserName" layoutX="71.0" layoutY="183.0" text="Admin" textFill="WHITE">
                      <font>
                         <Font name="Poppins Medium" size="38.0" />
                      </font>
                   </Label>
                   <Line endX="100.0" layoutX="140.0" layoutY="235.0" startX="-100.0" stroke="WHITE" />
-                  <Button fx:id="home_Btn" layoutX="35.0" layoutY="263.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="25.0" prefWidth="213.0" styleClass="nav-btn" stylesheets="@dashboard.css" text="Home">
-                     <font>
-                        <Font name="Poppins Medium" size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontAwesomeIconView glyphName="HOME" size="20" />
-                     </graphic>
-                  </Button>
                   <Button fx:id="addProduct_Btn" layoutX="35.0" layoutY="311.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="25.0" prefWidth="213.0" styleClass="nav-btn" stylesheets="@dashboard.css" text="Add Product" textFill="#0a0a0a">
                      <font>
                         <Font name="Poppins Medium" size="14.0" />
@@ -97,6 +89,14 @@
                         <FontAwesomeIconView fill="#bc2727" glyphName="SIGN_OUT" size="20" />
                      </graphic>
                   </Button>
+                  <Button fx:id="home_Btn" layoutX="35.0" layoutY="267.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="25.0" prefWidth="213.0" styleClass="nav-btn" stylesheets="@dashboard.css" text="Home" textFill="#0a0a0a">
+                     <font>
+                        <Font name="Poppins Medium" size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontAwesomeIconView glyphName="HOME" size="20" />
+                     </graphic>
+                  </Button>
                </children>
             </AnchorPane>
          </left>
@@ -117,11 +117,6 @@
                                     <String fx:value="card" />
                                  </styleClass>
                                  <children>
-                                    <ImageView fitHeight="65.0" fitWidth="80.0" layoutX="27.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../../../../../img/user.png" />
-                                       </image>
-                                    </ImageView>
                                     <Label alignment="CENTER" layoutX="27.0" layoutY="121.0" text="Today's Number Of Order" textFill="#f5f5f5">
                                        <font>
                                           <Font name="Poppins Medium" size="18.0" />
@@ -132,6 +127,7 @@
                                           <Font name="Poppins SemiBold" size="24.0" />
                                        </font>
                                     </Label>
+                                    <FontAwesomeIconView fill="WHITE" glyphName="USERS" layoutX="27.0" layoutY="80.0" selectionFill="#f5f5f5" size="50" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane layoutX="307.0" layoutY="10.0" prefHeight="180.0" prefWidth="282.0" stylesheets="@dashboard.css">
@@ -140,11 +136,6 @@
                                     <String fx:value="card" />
                                  </styleClass>
                                  <children>
-                                    <ImageView fitHeight="65.0" fitWidth="80.0" layoutX="25.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../../../../../img/user.png" />
-                                       </image>
-                                    </ImageView>
                                     <Label alignment="CENTER" layoutX="25.0" layoutY="123.0" prefHeight="27.0" prefWidth="236.0" text="Total Income" textFill="#f5f5f5">
                                        <font>
                                           <Font name="Poppins Medium" size="18.0" />
@@ -155,6 +146,7 @@
                                           <Font name="Poppins SemiBold" size="24.0" />
                                        </font>
                                     </Label>
+                                    <FontAwesomeIconView fill="WHITE" glyphName="MONEY" layoutX="38.0" layoutY="73.0" size="50" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane layoutX="599.0" layoutY="10.0" prefHeight="180.0" prefWidth="282.0" stylesheets="@dashboard.css" AnchorPane.leftAnchor="599.0" AnchorPane.topAnchor="10.0">
@@ -163,11 +155,6 @@
                                     <String fx:value="card" />
                                  </styleClass>
                                  <children>
-                                    <ImageView fitHeight="65.0" fitWidth="80.0" layoutX="20.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../../../../../img/user.png" />
-                                       </image>
-                                    </ImageView>
                                     <Label alignment="CENTER" layoutX="20.0" layoutY="120.0" prefHeight="27.0" prefWidth="237.0" text="Available Products" textFill="#f5f5f5">
                                        <font>
                                           <Font name="Poppins Medium" size="18.0" />
@@ -178,6 +165,7 @@
                                           <Font name="Poppins SemiBold" size="24.0" />
                                        </font>
                                     </Label>
+                                    <FontAwesomeIconView fill="WHITE" glyphName="CUBE" layoutX="47.0" layoutY="70.0" size="50" />
                                  </children>
                               </AnchorPane>
                            </children>

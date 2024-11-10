@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -33,6 +34,10 @@ import java.util.*;
 import java.util.Date;
 
 public class AdminDashboardController implements Initializable {
+
+
+    @FXML
+    private AnchorPane adminPane;
 
     @FXML
     private Label UserName;
@@ -194,6 +199,9 @@ public class AdminDashboardController implements Initializable {
     private Button orders_AddBtn;
 
     private Image image;
+
+    private double x = 0;
+    private double y = 0;
 
 //   Home
     public void homeDisplayTotalOrders(){
@@ -1026,7 +1034,18 @@ private int customerid;
         stage.setIconified(true);
 
     }
+    @FXML
+    void adminPane_Dragged(MouseEvent event) {
+        Stage stage = (Stage) adminPane.getScene().getWindow();
+        stage.setX(event.getScreenX() - x);
+        stage.setY(event.getScreenY() - y);
+    }
 
+    @FXML
+    void adminPane_Pressed(MouseEvent event) {
+        x=event.getScreenX();
+        y=event.getScreenY();
+    }
 
 
 //    Initialize Array list and others

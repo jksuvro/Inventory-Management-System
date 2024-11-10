@@ -6,13 +6,11 @@ import com.zksuvro.www.inventorymanagementsystem.service.RegistrationService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -55,10 +53,16 @@ public class registrationController implements Initializable {
     private Button signupReg;
 
     @FXML
+    private AnchorPane registrationPane;
+
+    @FXML
     private Label successfullySave;
 
     @FXML
     private TextField userNameReg;
+
+    private double x = 0;
+    private double y = 0;
 
     @FXML
     void regLoginBtn(ActionEvent event) {
@@ -85,13 +89,30 @@ public class registrationController implements Initializable {
         RegistrationService registrationService = new RegistrationService();
         registrationService.saveregistration(registration);
 
-        if(firstNameReg.getText().isEmpty()) {
-            firstNameReg.setStyle("-fx-border-color: #7e0000 ;" + " -fx-border-width: 2px ;" + " -fx-border-radius: 15px ;");
+        if(firstNameReg.getText().isEmpty() || lastNameReg.getText().isEmpty() || phoneReg.getText().isEmpty() || passwordReg.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all the fields");
+            alert.showAndWait();
         }else {
             successfullySave.setText("Sign up successful");
         }
 
 
+    }
+
+    @FXML
+    void registrationPane_Dragged(MouseEvent event) {
+        Stage stage = (Stage) registrationPane.getScene().getWindow();
+        stage.setX(event.getScreenX() - x);
+        stage.setY(event.getScreenY() - y);
+    }
+
+    @FXML
+    void registrationPane_Pressed(MouseEvent event) {
+        x=event.getScreenX();
+        y=event.getScreenY();
     }
 
     @Override

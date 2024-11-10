@@ -12,7 +12,7 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.LoginController">
+<AnchorPane fx:id="loginPane" onMouseDragged="#loginPane_Dragged" onMousePressed="#loginPane_Pressed" prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zksuvro.www.inventorymanagementsystem.controller.LoginController">
    <children>
       <AnchorPane layoutX="111.0" layoutY="179.0" prefHeight="660.0" prefWidth="400.0" styleClass="left-from" stylesheets="@loginDesign.css" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
